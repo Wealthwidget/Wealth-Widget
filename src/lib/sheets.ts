@@ -18,13 +18,16 @@ export async function appendToSheet(data: ValuationData) {
 
     console.log('Spreadsheet ID:', process.env.GOOGLE_SHEETS_ID);
 
+    // Format private key by replacing escaped newlines with actual newlines
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
+    
     console.log('Creating spreadsheet instance...');
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEETS_ID);
     
     console.log('Authenticating...');
     await doc.useServiceAccountAuth({
       client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      private_key: process.env.GOOGLE_PRIVATE_KEY,
+      private_key: privateKey,
     });
     
     console.log('Loading spreadsheet info...');
