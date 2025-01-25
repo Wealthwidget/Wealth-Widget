@@ -9,6 +9,21 @@ export interface ValuationData {
   valuation: number;
 }
 
+function decodeBase64Key(base64Key: string): string {
+  try {
+    // First try to decode as base64
+    const decoded = Buffer.from(base64Key, 'base64').toString('utf-8');
+    if (decoded.includes('PRIVATE KEY')) {
+      return decoded;
+    }
+    // If not base64, return as is
+    return base64Key;
+  } catch (e) {
+    // If decoding fails, return as is
+    return base64Key;
+  }
+}
+
 export async function appendToSheet(data: ValuationData) {
   try {
     // Check environment variables
@@ -27,19 +42,14 @@ export async function appendToSheet(data: ValuationData) {
     }
 
     console.log('All environment variables present');
-    console.log('Sheet ID:', process.env.GOOGLE_SHEETS_ID);
-    console.log('Service Account:', process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL);
     
-    // Format private key
-    console.log('Formatting private key...');
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
-    console.log('Private key starts with:', privateKey.substring(0, 50));
-    console.log('Private key ends with:', privateKey.substring(privateKey.length - 50));
+    // Decode and format private key
+    const privateKey = decodeBase64Key(process.env.GOOGLE_PRIVATE_KEY);
     
     console.log('Creating spreadsheet instance...');
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEETS_ID);
     
-    console.log('Authenticating...');
+    console.log('Authenticating with service account...');
     await doc.useServiceAccountAuth({
       client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       private_key: privateKey,
