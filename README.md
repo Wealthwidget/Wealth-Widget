@@ -194,3 +194,156 @@ The provided Google account credentials are shared among all widget users. Pleas
 - Do not modify other users' data in the sheet
 - Do not modify any Google Cloud settings
 - Contact support if you notice any issues
+
+# Wealth Valuation Widget
+
+A modern, chat-style widget that helps financial advisors and wealth management firms calculate company valuations based on Assets Under Management (AUM).
+
+![Wealth Widget Demo](demo.gif)
+
+## Features
+
+- 💬 iMessage-style chat interface
+- 📊 Real-time valuation calculations
+- 📝 Data collection in Google Sheets
+- 🎨 Modern, responsive design
+- 🔒 Secure data handling
+- 📱 Mobile-friendly
+- ⚡ Fast and lightweight
+
+## How It Works
+
+The widget provides a conversational interface that:
+1. Collects company information (Name, AUM, Revenue, Email)
+2. Calculates company valuation using industry-standard multiples
+3. Stores submissions in a Google Sheet for easy tracking
+4. Provides instant valuation feedback to users
+
+## Quick Start
+
+Add this code where you want the widget to appear on your website:
+
+```html
+<script>
+  (function(w,d,s,o,f,js,fjs){
+    w['Wealth-Widget']=o;w[o]=w[o]||function(){(w[o].q=w[o].q||[]).push(arguments)};
+    js=d.createElement(s),fjs=d.getElementsByTagName(s)[0];
+    js.id='wealth-widget';js.src=f;js.async=1;fjs.parentNode.insertBefore(js,fjs);
+  }(window,document,'script','ww','https://wealth-widget.vercel.app/widget.js'));
+</script>
+<div id="wealth-widget"></div>
+```
+
+## Complete Setup Guide
+
+### 1. Google Cloud Setup
+
+1. Create a Google Cloud Project:
+   - Go to [Google Cloud Console](https://console.cloud.google.com)
+   - Create a new project
+   - Enable Google Sheets API
+
+2. Create Service Account:
+   - Go to "IAM & Admin" > "Service Accounts"
+   - Click "Create Service Account"
+   - Name it (e.g., "wealth-valuation-widget")
+   - Grant "Editor" role
+   - Create and download the JSON key file
+
+### 2. Google Sheets Setup
+
+1. Create a new Google Sheet
+2. Add the following column headers in row 1:
+   - Timestamp
+   - Name
+   - AUM
+   - Revenue
+   - Email
+   - Valuation
+
+3. Share the sheet with your service account email:
+   - Click "Share"
+   - Add the service account email (ends with @...iam.gserviceaccount.com)
+   - Give "Editor" access
+
+### 3. Vercel Deployment
+
+1. Fork the repository:
+   ```bash
+   git clone https://github.com/Wealthwidget/Wealth-Widget.git
+   cd wealth-widget
+   ```
+
+2. Deploy to Vercel:
+   - Connect your GitHub repository to Vercel
+   - Add the following environment variables:
+     ```
+     GOOGLE_SHEETS_ID=your_sheet_id
+     GOOGLE_SERVICE_ACCOUNT_EMAIL=your_service_account_email
+     GOOGLE_PRIVATE_KEY=your_base64_encoded_private_key
+     ```
+
+3. Your widget is now live at `https://your-project.vercel.app`!
+
+## Widget Flow
+
+1. **Initial Contact**:
+   - Widget appears as a chat bubble
+   - Users click to start the valuation process
+
+2. **Data Collection**:
+   - Name: Company or individual name
+   - AUM: Assets Under Management (supports formats like "1.5m", "1500000")
+   - Revenue: Annual revenue (supports formats like "500k", "500000")
+   - Email: For sending results
+
+3. **Valuation Calculation**:
+   - Uses industry-standard multiple of 4.5x AUM
+   - Provides instant valuation feedback
+
+4. **Data Storage**:
+   - All submissions are securely stored in your Google Sheet
+   - Timestamp is automatically added
+   - Data is accessible only to sheet owners
+
+## Security & Privacy
+
+- No sensitive data is stored in the widget code
+- Google service account credentials are securely stored as environment variables
+- All data transmission is encrypted
+- Google Sheets API uses OAuth 2.0 authentication
+
+## Customization
+
+The widget can be customized by modifying:
+- `src/components/wealth-widget.tsx`: Main widget UI and logic
+- `src/lib/sheets.ts`: Google Sheets integration
+- `src/app/api/submit/route.ts`: API endpoint handling
+
+## Troubleshooting
+
+Common issues and solutions:
+
+1. **Widget not appearing**:
+   - Check if the script is properly added to your HTML
+   - Verify there's a div with id="wealth-widget"
+
+2. **Form submission errors**:
+   - Verify environment variables in Vercel
+   - Check Google Sheet permissions
+   - Ensure service account has correct access
+
+3. **Valuation not calculating**:
+   - Make sure AUM is entered in a supported format
+   - Check browser console for any errors
+
+## Support
+
+For issues or feature requests:
+1. Open an issue on GitHub
+2. Provide detailed description of the problem
+3. Include steps to reproduce if applicable
+
+## License
+
+MIT License - feel free to modify and use in your own projects!
