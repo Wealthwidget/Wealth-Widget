@@ -24,6 +24,7 @@ export default function WealthWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const widgetRef = useRef<HTMLDivElement>(null);
 
@@ -116,6 +117,9 @@ export default function WealthWidget() {
       setEmail(inputValue);
       
       try {
+        setIsSubmitting(true);
+        setError(null);
+        
         const response = await fetch('/api/submit', {
           method: 'POST',
           headers: {
@@ -130,7 +134,8 @@ export default function WealthWidget() {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to submit');
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to submit');
         }
 
         const data = await response.json();
@@ -139,7 +144,10 @@ export default function WealthWidget() {
         setCurrentStep(4);
         simulateTyping(`Perfect! I've calculated your company's valuation and sent the detailed report to your email. Based on your AUM of $${parseInt(aum).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}, your estimated valuation is $${(parseFloat(aum) * 4.5).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}. Check your inbox for the full analysis!`);
       } catch (err) {
-        setError("There was an error processing your request. Please try again.");
+        console.error('Submission error:', err);
+        setError(err instanceof Error ? err.message : "There was an error processing your request. Please try again.");
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -247,7 +255,7 @@ export default function WealthWidget() {
                 <div className="p-4 border-t border-gray-100">
                   <form
                     onSubmit={handleSubmit}
-                    className="flex space-x-2"
+                    className="flex w-full gap-2"
                   >
                     <input
                       type="text"
@@ -260,18 +268,19 @@ export default function WealthWidget() {
                         currentStep === 3 ? "Enter your email..." :
                         "Chat ended"
                       }
-                      disabled={currentStep === 4}
-                      className="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50"
+                      disabled={currentStep === 4 || isSubmitting}
+                      className="flex-1 rounded-lg border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
                     />
-                    <motion.button
+                    <button
                       type="submit"
-                      disabled={currentStep === 4 || !inputValue.trim()}
-                      className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      className={cn(
+                        "rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700",
+                        isSubmitting && "opacity-50 cursor-not-allowed"
+                      )}
+                      disabled={isSubmitting}
                     >
-                      Send
-                    </motion.button>
+                      {isSubmitting ? "Sending..." : "Send"}
+                    </button>
                   </form>
                 </div>
               )}
