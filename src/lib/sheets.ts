@@ -11,15 +11,30 @@ export interface ValuationData {
 
 export async function appendToSheet(data: ValuationData) {
   try {
-    if (!process.env.GOOGLE_SHEETS_ID || !process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
-      console.error('Missing required environment variables');
+    // Check environment variables
+    console.log('Checking environment variables...');
+    if (!process.env.GOOGLE_SHEETS_ID) {
+      console.error('Missing GOOGLE_SHEETS_ID');
+      return false;
+    }
+    if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
+      console.error('Missing GOOGLE_SERVICE_ACCOUNT_EMAIL');
+      return false;
+    }
+    if (!process.env.GOOGLE_PRIVATE_KEY) {
+      console.error('Missing GOOGLE_PRIVATE_KEY');
       return false;
     }
 
-    console.log('Spreadsheet ID:', process.env.GOOGLE_SHEETS_ID);
-
-    // Format private key by replacing escaped newlines with actual newlines
+    console.log('All environment variables present');
+    console.log('Sheet ID:', process.env.GOOGLE_SHEETS_ID);
+    console.log('Service Account:', process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL);
+    
+    // Format private key
+    console.log('Formatting private key...');
     const privateKey = process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n');
+    console.log('Private key starts with:', privateKey.substring(0, 50));
+    console.log('Private key ends with:', privateKey.substring(privateKey.length - 50));
     
     console.log('Creating spreadsheet instance...');
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEETS_ID);
@@ -36,9 +51,8 @@ export async function appendToSheet(data: ValuationData) {
 
     const sheet = doc.sheetsByIndex[0];
     if (!sheet) {
-      const error = new Error('No sheet found at index 0');
-      console.error(error);
-      throw error;
+      console.error('No sheet found at index 0');
+      return false;
     }
 
     console.log('Adding row to sheet with data:', {
@@ -58,19 +72,16 @@ export async function appendToSheet(data: ValuationData) {
       Email: data.email,
       Valuation: data.valuation,
     });
-    console.log('Row added successfully');
 
+    console.log('Row added successfully');
     return true;
-  } catch (error: any) {
-    console.error('Error in appendToSheet:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-      cause: error.cause,
-      response: error.response?.data || 'No response data',
-      status: error.response?.status || 'No status',
-      headers: error.response?.headers || 'No headers',
-    });
-    throw error;
+  } catch (error) {
+    console.error('Error in appendToSheet:', error);
+    if (error instanceof Error) {
+      console.error('Error name:', error.name);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    return false;
   }
 }
