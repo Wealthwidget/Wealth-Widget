@@ -52,14 +52,9 @@ export async function POST(request: NextRequest) {
       stack: err.stack,
       cause: err.cause,
     });
-    
+
     return NextResponse.json({
-      error: "Internal server error",
-      details: {
-        message: err.message || 'An unknown error occurred',
-        type: err.name || 'UnknownError',
-        ...(process.env.NODE_ENV === 'development' ? { stack: err.stack } : {})
-      },
+      error: "An error occurred while processing your request",
     }, { status: 500 });
   }
 }

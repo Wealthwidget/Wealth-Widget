@@ -1,6 +1,4 @@
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 
 export interface ValuationData {
   timestamp: string;
@@ -13,21 +11,20 @@ export interface ValuationData {
 
 export async function appendToSheet(data: ValuationData) {
   try {
-    // Read the service account credentials file
-    const credentialsPath = join(process.cwd(), 'wealth-valuation-widget-f562711c2859.json');
-    console.log('Reading credentials from:', credentialsPath);
-    const credentials = JSON.parse(readFileSync(credentialsPath, 'utf8'));
+    if (!process.env.GOOGLE_SHEETS_ID || !process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !process.env.GOOGLE_PRIVATE_KEY) {
+      console.error('Missing required environment variables');
+      return false;
+    }
 
-    console.log('Service account email:', credentials.client_email);
     console.log('Spreadsheet ID:', process.env.GOOGLE_SHEETS_ID);
 
     console.log('Creating spreadsheet instance...');
-    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEETS_ID!);
+    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEETS_ID);
     
     console.log('Authenticating...');
     await doc.useServiceAccountAuth({
-      client_email: credentials.client_email,
-      private_key: credentials.private_key,
+      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      private_key: process.env.GOOGLE_PRIVATE_KEY,
     });
     
     console.log('Loading spreadsheet info...');
