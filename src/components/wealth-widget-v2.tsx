@@ -289,8 +289,15 @@ export default function WealthWidget({ isDarkMode, toggleDarkMode }: WealthWidge
         <div className={`w-full max-w-2xl mx-auto h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] flex flex-col ${
           isDarkMode ? 'bg-gray-900' : 'bg-white'
         }`}>
+          {/* Chat Title - Mobile Only */}
+          <div className="sm:hidden px-4 py-2 text-center">
+            <h1 className={`text-xl font-semibold ${isDarkMode ? 'text-white' : 'text-purple-900'}`}>
+              Wealth Valuation Assistant
+            </h1>
+          </div>
+
           {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-2 sm:py-4 space-y-4">
+          <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4">
             {messages.map((message, index) => (
               <div
                 key={index}

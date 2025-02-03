@@ -113,78 +113,65 @@ export default function LandingPage({ onGetStarted, isDarkMode, toggleDarkMode }
       </motion.header>
 
       {/* Main Content */}
-      <main className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 md:pt-28">
+      <main className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20">
         {/* Content Container */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-center w-full max-w-4xl mx-auto space-y-8 sm:space-y-12 md:space-y-16"
+          className="text-center w-full max-w-4xl mx-auto space-y-6 sm:space-y-8"
         >
           {/* Heading */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight sm:leading-tight md:leading-tight ${
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className={`text-3xl sm:text-4xl md:text-5xl font-bold ${
               isDarkMode ? 'text-white' : 'text-purple-900'
             }`}
           >
-            <span className="inline-block">Discover Your Practice's</span>
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-purple-900 inline-block">
-              True Value
-            </span>
+            Discover Your Practice's True Value
           </motion.h1>
 
-          {/* Description */}
+          {/* Subheading */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className={`text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-4 ${
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className={`text-lg sm:text-xl md:text-2xl ${
               isDarkMode ? 'text-gray-300' : 'text-purple-800/80'
             }`}
           >
             Our AI-powered valuation tool provides instant, accurate estimates for your wealth management practice, helping you make informed decisions about your future.
           </motion.p>
 
-          {/* Chat Message */}
+          {/* Adam Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.4 }}
-            className="w-full max-w-xl mx-auto px-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className={`mx-auto max-w-md rounded-2xl p-4 sm:p-6 ${
+              isDarkMode ? 'bg-gray-800' : 'bg-white'
+            } shadow-xl`}
           >
-            <div className={`${
-              isDarkMode 
-                ? 'bg-gray-800 border-gray-700' 
-                : 'bg-white border-purple-100'
-              } shadow-xl p-5 sm:p-6 md:p-8 rounded-3xl border transform transition-transform duration-300 hover:scale-[1.02]`}
-            >
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
-                <div className="flex-shrink-0 w-16 sm:w-18 md:w-20 h-16 sm:h-18 md:h-20 relative">
-                  <Image
-                    src="/images/Stewardshipassistant.svg"
-                    alt="Adam"
-                    width={80}
-                    height={80}
-                    className="rounded-full"
-                  />
-                </div>
-                <div className="flex-1 text-center sm:text-left">
-                  <div className={`font-semibold mb-2 text-base sm:text-lg md:text-xl ${
-                    isDarkMode ? 'text-white' : 'text-purple-900'
-                  }`}>
-                    Adam: Stewardship's Valuation Expert
-                  </div>
-                  <div className={`text-sm sm:text-base md:text-lg ${
-                    isDarkMode ? 'text-gray-300' : 'text-purple-800'
-                  }`}>
-                    Let's discover the true value of your practice together.
-                  </div>
-                </div>
-              </div>
+            <div className="flex flex-col items-center space-y-3">
+              <Image
+                src="/adam-avatar.svg"
+                alt="Adam"
+                width={80}
+                height={80}
+                className="rounded-full"
+              />
+              <h2 className={`text-xl sm:text-2xl font-semibold ${
+                isDarkMode ? 'text-white' : 'text-purple-900'
+              }`}>
+                Adam: Stewardship's Valuation Expert
+              </h2>
+              <p className={`text-base sm:text-lg ${
+                isDarkMode ? 'text-gray-300' : 'text-purple-800/80'
+              }`}>
+                Let's discover the true value of your practice together.
+              </p>
             </div>
           </motion.div>
 
@@ -192,19 +179,18 @@ export default function LandingPage({ onGetStarted, isDarkMode, toggleDarkMode }
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="w-full flex justify-center px-4"
+            transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={handleGetStarted}
-              className={`text-white px-6 sm:px-8 md:px-12 py-3 sm:py-4 md:py-6 rounded-2xl text-base sm:text-lg md:text-xl font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 ${
-                isDarkMode ? 'bg-purple-600' : 'bg-purple-900'
+              className={`px-8 py-4 text-lg sm:text-xl rounded-xl font-medium transition-all duration-200 ${
+                isDarkMode
+                  ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                  : 'bg-purple-600 hover:bg-purple-700 text-white'
               }`}
             >
               Find My Valuation
-            </motion.button>
+            </button>
           </motion.div>
         </motion.div>
       </main>
