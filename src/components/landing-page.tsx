@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import LegalDisclaimer from './legal-disclaimer';
 import MobileMenu from './mobile-menu';
 
@@ -101,25 +101,25 @@ export default function LandingPage({ onGetStarted, isDarkMode, toggleDarkMode }
             </button>
           </div>
         </nav>
-
-        {/* Mobile Menu */}
-        <MobileMenu
-          isOpen={isMobileMenuOpen}
-          onClose={() => setIsMobileMenuOpen(false)}
-          onLegalClick={showLegal}
-          onDarkModeToggle={toggleDarkMode}
-          isDarkMode={isDarkMode}
-        />
       </motion.header>
 
+      {/* Mobile Menu - Moved outside header */}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        onLegalClick={showLegal}
+        onDarkModeToggle={toggleDarkMode}
+        isDarkMode={isDarkMode}
+      />
+
       {/* Main Content */}
-      <main className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20">
+      <main className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-12 sm:pt-20">
         {/* Content Container */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-center w-full max-w-4xl mx-auto space-y-6 sm:space-y-8"
+          className="text-center w-full max-w-4xl mx-auto space-y-4 sm:space-y-8"
         >
           {/* Heading */}
           <motion.h1
