@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import LegalDisclaimer from './legal-disclaimer';
+import MobileMenu from './mobile-menu';
 import { appendToSheet, ValuationData } from '@/lib/sheets';
 
 interface WealthWidgetProps {
@@ -18,6 +19,7 @@ export default function WealthWidget({ isDarkMode, toggleDarkMode }: WealthWidge
   const [isTyping, setIsTyping] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isLegalOpen, setIsLegalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [brokerageAum, setBrokerageAum] = useState('');
@@ -200,7 +202,7 @@ export default function WealthWidget({ isDarkMode, toggleDarkMode }: WealthWidge
   if (!mounted) return null;
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-white'} transition-colors duration-200`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-purple-900'}`}>
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
@@ -210,12 +212,40 @@ export default function WealthWidget({ isDarkMode, toggleDarkMode }: WealthWidge
           isDarkMode ? 'bg-gray-900/90' : 'bg-white/90'
         } backdrop-blur-sm`}
       >
-        <nav className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-          <div className={`text-xl sm:text-2xl font-semibold ${isDarkMode ? 'text-white' : 'text-purple-900'}`}>
-            Stewardship Wealth Management
+        <nav className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="w-full sm:w-auto flex items-center justify-between">
+            {/* Burger Menu Button (Mobile Only) */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className={`sm:hidden p-2 rounded-lg ${
+                isDarkMode ? 'text-white hover:bg-gray-800' : 'text-purple-900 hover:bg-purple-50'
+              }`}
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+
+            <div className={`text-xl sm:text-2xl font-semibold ${isDarkMode ? 'text-white' : 'text-purple-900'}`}>
+              Stewardship Wealth Management
+            </div>
+
+            {/* Spacer for mobile to maintain center alignment */}
+            <div className="w-8 sm:hidden"></div>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
+          {/* Desktop Navigation */}
+          <div className="hidden sm:flex items-center gap-3 sm:gap-4 md:gap-6">
             <button
               onClick={showLegal}
               className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl text-base sm:text-lg font-medium transition-all duration-200 ${
@@ -245,55 +275,28 @@ export default function WealthWidget({ isDarkMode, toggleDarkMode }: WealthWidge
         </nav>
       </motion.header>
 
-      {/* Main Content */}
-      <main className="min-h-screen pt-24 px-4 sm:px-6 md:px-8">
-        <div className="max-w-4xl mx-auto">
-          <h1 className={`text-3xl sm:text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-purple-900'} text-center mb-4`}>
-            Wealth Valuation Assistant
-          </h1>
-          <p className={`${isDarkMode ? 'text-gray-300' : 'text-purple-800/80'} text-center mb-8`}>
-            Get an instant valuation of your wealth management practice
-          </p>
+      {/* Mobile Menu - Moved outside header */}
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        onLegalClick={showLegal}
+        onDarkModeToggle={toggleDarkMode}
+        isDarkMode={isDarkMode}
+      />
 
-          {/* Chat Container */}
-          <div className={`${
-            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-purple-100'
-          } rounded-2xl shadow-xl border overflow-hidden transition-colors duration-200`}>
-            {/* Messages */}
-            <div className="h-[500px] overflow-y-auto p-6 space-y-4">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start items-start'}`}
-                >
-                  {message.type === 'assistant' && (
-                    <div className="flex-shrink-0 mr-3">
-                      <Image
-                        src="/adam-avatar.svg"
-                        alt="Adam"
-                        width={40}
-                        height={40}
-                        className="rounded-full"
-                      />
-                    </div>
-                  )}
-                  <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                      message.type === 'user'
-                        ? isDarkMode 
-                          ? 'bg-purple-700 text-white'
-                          : 'bg-purple-100 text-purple-900'
-                        : isDarkMode
-                          ? 'bg-gray-700 text-white'
-                          : 'bg-purple-600 text-white'
-                    }`}
-                  >
-                    {message.content}
-                  </div>
-                </div>
-              ))}
-              {isTyping && (
-                <div className="flex items-start">
+      {/* Main Content */}
+      <main className="min-h-screen flex items-center justify-center pt-16 sm:pt-20">
+        <div className={`w-full max-w-2xl mx-auto h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] flex flex-col ${
+          isDarkMode ? 'bg-gray-900' : 'bg-white'
+        }`}>
+          {/* Chat Messages */}
+          <div className="flex-1 overflow-y-auto px-4 py-2 sm:py-4 space-y-4">
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start items-start'}`}
+              >
+                {message.type === 'assistant' && (
                   <div className="flex-shrink-0 mr-3">
                     <Image
                       src="/adam-avatar.svg"
@@ -303,49 +306,75 @@ export default function WealthWidget({ isDarkMode, toggleDarkMode }: WealthWidge
                       className="rounded-full"
                     />
                   </div>
-                  <div className={`rounded-2xl px-4 py-3 ${
-                    isDarkMode ? 'bg-gray-700 text-white' : 'bg-purple-600 text-white'
-                  }`}>
-                    <div className="flex space-x-2">
-                      <div className="w-2 h-2 rounded-full bg-current animate-bounce" />
-                      <div className="w-2 h-2 rounded-full bg-current animate-bounce delay-100" />
-                      <div className="w-2 h-2 rounded-full bg-current animate-bounce delay-200" />
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input Form */}
-            <form onSubmit={handleSubmit} className={`p-4 border-t ${
-              isDarkMode ? 'border-gray-700' : 'border-purple-100'
-            }`}>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Type your response..."
-                  className={`flex-1 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-                    isDarkMode 
-                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                      : 'bg-white border-purple-200 text-purple-900 placeholder-purple-400'
-                  } border transition-colors duration-200`}
-                />
-                <button
-                  type="submit"
-                  className={`px-6 py-2 rounded-xl transition-colors duration-200 ${
-                    isDarkMode
-                      ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                      : 'bg-purple-600 hover:bg-purple-700 text-white'
+                )}
+                <div
+                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                    message.type === 'user'
+                      ? isDarkMode 
+                        ? 'bg-purple-700 text-white'
+                        : 'bg-purple-100 text-purple-900'
+                      : isDarkMode
+                        ? 'bg-gray-700 text-white'
+                        : 'bg-purple-600 text-white'
                   }`}
                 >
-                  Send
-                </button>
+                  {message.content}
+                </div>
               </div>
-            </form>
+            ))}
+            {isTyping && (
+              <div className="flex items-start">
+                <div className="flex-shrink-0 mr-3">
+                  <Image
+                    src="/adam-avatar.svg"
+                    alt="Adam"
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                </div>
+                <div className={`rounded-2xl px-4 py-3 ${
+                  isDarkMode ? 'bg-gray-700 text-white' : 'bg-purple-600 text-white'
+                }`}>
+                  <div className="flex space-x-2">
+                    <div className="w-2 h-2 rounded-full bg-current animate-bounce" />
+                    <div className="w-2 h-2 rounded-full bg-current animate-bounce delay-100" />
+                    <div className="w-2 h-2 rounded-full bg-current animate-bounce delay-200" />
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
+
+          {/* Input Form */}
+          <form onSubmit={handleSubmit} className={`p-4 border-t ${
+            isDarkMode ? 'border-gray-700' : 'border-purple-100'
+          }`}>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Type your response..."
+                className={`flex-1 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                  isDarkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
+                    : 'bg-white border-purple-200 text-purple-900 placeholder-purple-400'
+                } border transition-colors duration-200`}
+              />
+              <button
+                type="submit"
+                className={`px-6 py-2 rounded-xl transition-colors duration-200 ${
+                  isDarkMode
+                    ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                }`}
+              >
+                Send
+              </button>
+            </div>
+          </form>
         </div>
       </main>
 

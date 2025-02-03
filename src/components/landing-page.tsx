@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import LegalDisclaimer from './legal-disclaimer';
+import MobileMenu from './mobile-menu';
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -13,6 +14,7 @@ interface LandingPageProps {
 
 export default function LandingPage({ onGetStarted, isDarkMode, toggleDarkMode }: LandingPageProps) {
   const [isLegalOpen, setIsLegalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleGetStarted = () => {
     setIsLegalOpen(true);
@@ -39,12 +41,39 @@ export default function LandingPage({ onGetStarted, isDarkMode, toggleDarkMode }
         } backdrop-blur-sm`}
       >
         <nav className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-          <div className={`text-xl sm:text-2xl font-semibold ${isDarkMode ? 'text-white' : 'text-purple-900'}`}>
-            Stewardship Wealth Management
+          <div className="w-full sm:w-auto flex items-center justify-between">
+            {/* Burger Menu Button (Mobile Only) */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className={`sm:hidden p-2 rounded-lg ${
+                isDarkMode ? 'text-white hover:bg-gray-800' : 'text-purple-900 hover:bg-purple-50'
+              }`}
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+
+            <div className={`text-xl sm:text-2xl font-semibold ${isDarkMode ? 'text-white' : 'text-purple-900'}`}>
+              Stewardship Wealth Management
+            </div>
+
+            {/* Spacer for mobile to maintain center alignment */}
+            <div className="w-8 sm:hidden"></div>
           </div>
 
-          <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
-            {/* Legal Button */}
+          {/* Desktop Navigation */}
+          <div className="hidden sm:flex items-center gap-3 sm:gap-4 md:gap-6">
             <button
               onClick={showLegal}
               className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-xl text-base sm:text-lg font-medium transition-all duration-200 ${
@@ -54,7 +83,6 @@ export default function LandingPage({ onGetStarted, isDarkMode, toggleDarkMode }
               Legal
             </button>
 
-            {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
               className={`p-2 sm:p-2.5 md:p-3 rounded-xl transition-all duration-200 ${
@@ -73,6 +101,15 @@ export default function LandingPage({ onGetStarted, isDarkMode, toggleDarkMode }
             </button>
           </div>
         </nav>
+
+        {/* Mobile Menu */}
+        <MobileMenu
+          isOpen={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
+          onLegalClick={showLegal}
+          onDarkModeToggle={toggleDarkMode}
+          isDarkMode={isDarkMode}
+        />
       </motion.header>
 
       {/* Main Content */}
