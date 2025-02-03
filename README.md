@@ -1,10 +1,10 @@
-# Wealth Valuation Widget v2 - Integration Guide
+# Stewardship Wealth Management - Valuation Tool v2
 
-This guide will help you add the wealth valuation widget to your website. The widget provides an interactive chat interface that helps calculate company valuations based on AUM and revenue.
+A sophisticated web application that helps financial advisors and wealth management firms calculate accurate company valuations based on their Brokerage and Advisory Assets Under Management (AUM).
 
 ## Features
 
-- Professional chat interface with modern animations and iMessage-style design
+- Professional interface with modern animations and design
 - Sophisticated valuation calculations based on AUM tiers:
   * Under 500MM:
     - 1x multiplier for Brokerage AUM
@@ -41,39 +41,9 @@ This account gives you access to:
 3. Open "Wealth Widget Submissions" from the recent files
 4. All form submissions will appear here automatically
 
-## Step-by-Step Integration
-
-### 1. Basic Integration (5 minutes)
-
-Add this code where you want the widget to appear on your website:
-
-```html
-<!-- Step 1: Add the widget container -->
-<div id="wealth-widget"></div>
-
-<!-- Step 2: Add the widget script -->
-<script src="https://[PROVIDED-URL]/widget.js"></script>
-```
-
-That's it! The widget will appear as a chat bubble in the bottom-right corner of your website.
-
-### 2. Customizing the Widget (Optional)
-
-You can customize various aspects of the widget:
-
-```html
-<script>
-  window.wealthWidgetConfig = {
-    darkMode: true, // Enable dark mode
-    position: 'bottom-right', // Widget position
-    initialMessage: 'Custom welcome message' // Override default welcome message
-  };
-</script>
-```
-
 ## Understanding the Valuation Formula
 
-The widget uses a tiered valuation system based on total AUM:
+The application uses a tiered valuation system based on total AUM:
 
 1. For practices under $500 million in total AUM:
    - Brokerage AUM is valued at 1x
@@ -97,15 +67,15 @@ Example calculation:
 
 ### Common Issues
 
-1. Widget not appearing?
-   - Check if the script is loaded correctly
+1. Application not loading?
+   - Check your internet connection
    - Verify there are no JavaScript errors in the console
-   - Ensure the container div exists on the page
+   - Try clearing your browser cache
 
 2. Valuation not calculating?
    - Make sure to enter numbers only
    - Use standard formats (e.g., "1 million" or "1000000")
-   - Check for any error messages in the chat
+   - Check for any error messages in the application
 
 3. Can't access the Google Sheet?
    - Double-check the login credentials
