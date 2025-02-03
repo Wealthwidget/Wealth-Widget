@@ -9,63 +9,55 @@ export interface ValuationData {
   valuation: number;
 }
 
-function decodeBase64Key(base64Key: string): string {
-  try {
-    // First try to decode as base64
-    const decoded = Buffer.from(base64Key, 'base64').toString('utf-8');
-    if (decoded.includes('PRIVATE KEY')) {
-      return decoded;
-    }
-    // If not base64, return as is
-    return base64Key;
-  } catch (e) {
-    // If decoding fails, return as is
-    return base64Key;
+function formatPrivateKey(key: string): string {
+  // If it's already a PEM key, return as is
+  if (key.includes('-----BEGIN PRIVATE KEY-----')) {
+    return key;
   }
+  
+  // Format as PEM key
+  return `-----BEGIN PRIVATE KEY-----\n${key}\n-----END PRIVATE KEY-----\n`;
 }
 
 export async function appendToSheet(data: ValuationData) {
   try {
-    // Check environment variables
-    console.log('Checking environment variables...');
+    console.log('Sheets: Starting appendToSheet...');
+    console.log('Sheets: Environment variables:', {
+      SHEETS_ID: process.env.GOOGLE_SHEETS_ID?.substring(0, 5) + '...',
+      SERVICE_EMAIL: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      HAS_KEY: !!process.env.GOOGLE_PRIVATE_KEY
+    });
+
     if (!process.env.GOOGLE_SHEETS_ID) {
-      console.error('Missing GOOGLE_SHEETS_ID');
-      return false;
+      throw new Error('Missing GOOGLE_SHEETS_ID');
     }
     if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
-      console.error('Missing GOOGLE_SERVICE_ACCOUNT_EMAIL');
-      return false;
+      throw new Error('Missing GOOGLE_SERVICE_ACCOUNT_EMAIL');
     }
     if (!process.env.GOOGLE_PRIVATE_KEY) {
-      console.error('Missing GOOGLE_PRIVATE_KEY');
-      return false;
+      throw new Error('Missing GOOGLE_PRIVATE_KEY');
     }
 
-    console.log('All environment variables present');
-    
-    // Decode and format private key
-    const privateKey = decodeBase64Key(process.env.GOOGLE_PRIVATE_KEY);
-    
-    console.log('Creating spreadsheet instance...');
+    console.log('Sheets: Creating spreadsheet instance...');
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEETS_ID);
     
-    console.log('Authenticating with service account...');
+    console.log('Sheets: Authenticating...');
+    const privateKey = formatPrivateKey(process.env.GOOGLE_PRIVATE_KEY);
     await doc.useServiceAccountAuth({
       client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       private_key: privateKey,
     });
     
-    console.log('Loading spreadsheet info...');
+    console.log('Sheets: Loading document info...');
     await doc.loadInfo();
-    console.log('Spreadsheet loaded:', doc.title);
+    console.log('Sheets: Document title:', doc.title);
 
     const sheet = doc.sheetsByIndex[0];
     if (!sheet) {
-      console.error('No sheet found at index 0');
-      return false;
+      throw new Error('No sheet found at index 0');
     }
 
-    console.log('Adding row to sheet with data:', {
+    console.log('Sheets: Adding row with data:', {
       timestamp: data.timestamp,
       name: data.name,
       aum: data.aum,
@@ -83,15 +75,17 @@ export async function appendToSheet(data: ValuationData) {
       Valuation: data.valuation,
     });
 
-    console.log('Row added successfully');
+    console.log('Sheets: Row added successfully');
     return true;
   } catch (error) {
-    console.error('Error in appendToSheet:', error);
+    console.error('Sheets: Error in appendToSheet:', error);
     if (error instanceof Error) {
-      console.error('Error name:', error.name);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
+      console.error('Sheets: Error details:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
     }
-    return false;
+    throw error; // Re-throw to be handled by the API route
   }
 }

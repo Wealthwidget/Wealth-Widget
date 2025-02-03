@@ -1,15 +1,36 @@
-import dynamic from 'next/dynamic';
+'use client';
 
-const WealthWidget = dynamic(() => import('@/components/wealth-widget'), {
-  ssr: false
-});
+import { useState } from 'react';
+import LandingPage from '@/components/landing-page';
+import WealthWidget from '@/components/wealth-widget-v2';
 
 export default function Home() {
+  const [showWidget, setShowWidget] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+    if (!isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4">
-      <div className="relative w-full max-w-5xl">
-        <WealthWidget />
-      </div>
+    <main>
+      {!showWidget ? (
+        <LandingPage 
+          onGetStarted={() => setShowWidget(true)} 
+          isDarkMode={isDarkMode}
+          toggleDarkMode={toggleDarkMode}
+        />
+      ) : (
+        <WealthWidget 
+          isDarkMode={isDarkMode}
+          toggleDarkMode={toggleDarkMode}
+        />
+      )}
     </main>
   );
 }
