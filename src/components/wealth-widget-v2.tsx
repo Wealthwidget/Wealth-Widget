@@ -297,52 +297,69 @@ export default function WealthWidget({ isDarkMode, toggleDarkMode }: WealthWidge
           </div>
 
           {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-2 space-y-4">
+          <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-2 sm:py-6 space-y-4 sm:space-y-6">
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start items-start'}`}
+                className={`flex ${
+                  message.type === 'user' ? 'justify-end' : 'justify-start'
+                }`}
               >
-                {message.type === 'assistant' && (
-                  <div className="flex-shrink-0 mr-3">
-                    <Image
-                      src="/adam-avatar.svg"
-                      alt="Adam"
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                    />
+                <div className={`flex items-start space-x-2 sm:space-x-4 max-w-[80%] ${
+                  message.type === 'user' ? 'flex-row-reverse space-x-reverse sm:space-x-reverse' : 'flex-row'
+                }`}>
+                  {message.type !== 'user' && (
+                    <div className="flex-shrink-0">
+                      <Image
+                        src="/adam-avatar.svg"
+                        alt="Adam"
+                        width={40}
+                        height={40}
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
+                      />
+                    </div>
+                  )}
+                  <div
+                    className={`rounded-2xl px-4 sm:px-6 py-2 sm:py-3 ${
+                      message.type === 'user'
+                        ? `${isDarkMode ? 'bg-purple-600' : 'bg-purple-600'} text-white`
+                        : `${
+                            isDarkMode ? 'bg-gray-800' : 'bg-white'
+                          } ${isDarkMode ? 'text-white' : 'text-gray-900'}`
+                    }`}
+                  >
+                    <p className="text-sm sm:text-base whitespace-pre-wrap">{message.content}</p>
                   </div>
-                )}
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                    message.type === 'user'
-                      ? isDarkMode 
-                        ? 'bg-purple-700 text-white'
-                        : 'bg-purple-100 text-purple-900'
-                      : isDarkMode
-                        ? 'bg-gray-700 text-white'
-                        : 'bg-purple-600 text-white'
-                  }`}
-                >
-                  {message.content}
+                  {message.type === 'user' && (
+                    <div className="flex-shrink-0">
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full ${
+                        isDarkMode ? 'bg-gray-800' : 'bg-purple-100'
+                      } flex items-center justify-center`}>
+                        <span className={`text-sm sm:text-base font-medium ${
+                          isDarkMode ? 'text-white' : 'text-purple-600'
+                        }`}>
+                          {message.content.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
             {isTyping && (
               <div className="flex items-start">
-                <div className="flex-shrink-0 mr-3">
+                <div className="flex-shrink-0">
                   <Image
                     src="/adam-avatar.svg"
                     alt="Adam"
                     width={40}
                     height={40}
-                    className="rounded-full"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-full"
                   />
                 </div>
-                <div className={`rounded-2xl px-4 py-3 ${
-                  isDarkMode ? 'bg-gray-700 text-white' : 'bg-purple-600 text-white'
-                }`}>
+                <div className={`rounded-2xl px-4 sm:px-6 py-2 sm:py-3 ${
+                  isDarkMode ? 'bg-gray-800' : 'bg-white'
+                } ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                   <div className="flex space-x-2">
                     <div className="w-2 h-2 rounded-full bg-current animate-bounce" />
                     <div className="w-2 h-2 rounded-full bg-current animate-bounce delay-100" />
@@ -355,33 +372,31 @@ export default function WealthWidget({ isDarkMode, toggleDarkMode }: WealthWidge
           </div>
 
           {/* Input Form */}
-          <form onSubmit={handleSubmit} className={`p-4 border-t ${
-            isDarkMode ? 'border-gray-700' : 'border-purple-100'
+          <div className={`p-4 sm:p-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'} border-t ${
+            isDarkMode ? 'border-gray-700' : 'border-gray-200'
           }`}>
-            <div className="flex gap-2">
+            <form onSubmit={handleSubmit} className="flex space-x-4">
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Type your response..."
-                className={`flex-1 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-                  isDarkMode 
-                    ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400'
-                    : 'bg-white border-purple-200 text-purple-900 placeholder-purple-400'
-                } border transition-colors duration-200`}
+                className={`flex-1 p-2 sm:p-3 rounded-xl border ${
+                  isDarkMode
+                    ? 'bg-gray-900 border-gray-700 text-white placeholder-gray-400'
+                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500'
+                } focus:outline-none focus:ring-2 focus:ring-purple-500`}
               />
               <button
                 type="submit"
-                className={`px-6 py-2 rounded-xl transition-colors duration-200 ${
-                  isDarkMode
-                    ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                    : 'bg-purple-600 hover:bg-purple-700 text-white'
-                }`}
+                className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-white font-medium ${
+                  isDarkMode ? 'bg-purple-600 hover:bg-purple-700' : 'bg-purple-600 hover:bg-purple-700'
+                } transition-colors duration-200`}
               >
                 Send
               </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </main>
 
